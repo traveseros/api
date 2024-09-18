@@ -2,6 +2,8 @@
 DOCKER_COMPOSE = docker-compose --env-file .env
 APP_CONTAINER = traveseros
 DB_CONTAINER = traveseros_db
+UID=$(shell id -u)
+GID=$(shell id -g)
 
 # Levantar los servicios (compila las imágenes si es necesario)
 start:
@@ -29,7 +31,10 @@ migrate:
 
 # Ejecutar comandos dentro del contenedor de Symfony (ej: make exec cmd="php bin/console cache:clear")
 bash:
-	$(DOCKER_COMPOSE) exec $(APP_CONTAINER) sh
+	$(DOCKER_COMPOSE) exec -u ${UID}:${GID} $(APP_CONTAINER) sh
+
+docker-clean:
+	docker-compose down --volumes --remove-orphans
 
 # Mostrar ayuda
 help:

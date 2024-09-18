@@ -26,5 +26,5 @@ COPY . /var/www/html/
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Exponer el puerto 9000 y ejecutar el servidor PHP-FPM
-EXPOSE 9000
+#EXPOSE 9000
 CMD ["php-fpm"]
