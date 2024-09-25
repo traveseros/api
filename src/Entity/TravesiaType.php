@@ -7,4 +7,6 @@ enum TravesiaType: int
     case LARGA = 1;
     case CORTA = 2;
     case FAMILIAR = 3;
+
+    case CONTROLES = 4;
 }

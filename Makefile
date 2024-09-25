@@ -29,9 +29,11 @@ install-deps:
 migrate:
 	$(DOCKER_COMPOSE) exec $(APP_CONTAINER) php bin/console doctrine:migrations:migrate --no-interaction
 
-# Ejecutar comandos dentro del contenedor de Symfony (ej: make exec cmd="php bin/console cache:clear")
 bash:
 	$(DOCKER_COMPOSE) exec -u ${UID}:${GID} $(APP_CONTAINER) sh
+
+console:
+	$(DOCKER_COMPOSE) exec -u ${UID}:${GID} $(APP_CONTAINER) php bin/console $(cmd)
 
 docker-clean:
 	docker-compose down --volumes --remove-orphans
