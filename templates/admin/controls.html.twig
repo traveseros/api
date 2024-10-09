@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+        <div class="col-12">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-header">
+                    <h3>Controles</h3>
+                    <div class="btn btn-outline-success btn-sm" id="save"><i class="fa fa-save"></i> Guardar</div>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Control</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Grupo</th>
+                            <th scope="col">Lat/long</th>
+                            <th scope="col">Distancia</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for control in controls %}
+                        <tr>
+                            <th scope="row">{{ control.id }}</th>
+                            <td><input type="number" id="controlId_{{ control.id }}" value="{{ control.controlId }}"/></td>
+                            <td><input type="text" id="comment_{{ control.id }}" value="{{ control.comment }}"/></td>
+                            <td>{{ control.groupping }}</td>
+                            <td>{{ control.lat }}/{{ control.lon }}</td>
+                            <td><input type="number" id="distance_{{ control.id }}" value="{{ control.distance }}"/></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const controls = {{ controls|json_encode|raw }};
+        $('document').ready(function(){
+            $('#save').click(() => {
+                $('#save').html("<i class='fa fa-spinner fa-spin'></i> Guardando")
+                // Crear el array de datos usando .map() y construir el objeto para cada control
+                const payload = controls.map((control, key) => {
+                    return {
+                        "id": control.id,
+                        "lat": control.lat,
+                        "lon": control.lon,
+                        "dist": $(`#distance_${control.id}`).val(),
+                        "controlId": $(`#controlId_${control.id}`).val(),
+                        "comment": $(`#comment_${control.id}`).val(),
+                        "groupping": control.groupping
+                    };
+                });
+
+                // Enviar los datos usando $.post(), serializando el array a JSON si es necesario
+                $.post("{{ path('controls_save') }}", JSON.stringify(payload))
+                    .fail(function(xhr, status, error) {
+                        console.error("Error en la solicitud: ", error);
+                    })
+                    .done((function(){
+                        location.reload();
+                    }))
+            });
+        });
+    </script>
+
+{% endblock %}
+

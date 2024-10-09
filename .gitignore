@@ -59,4 +59,5 @@
 /public/bundles/
 /var/
 /vendor/
+/src/Service/data/credentials.json
 ###< symfony/framework-bundle ###

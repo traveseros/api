@@ -76,9 +76,31 @@ class Control implements \JsonSerializable
         return $this->groupping;
     }
 
+    public function setControlId(int $controlId): self
+    {
+        $this->controlId = $controlId;
+
+        return $this;
+    }
+
+    public function setDistance(float $distance): self
+    {
+        $this->distance = $distance;
+
+        return $this;
+    }
+
+    public function setComment(string $comment): self
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
     public function jsonSerialize(): mixed
     {
         return [
+          'id' => $this->id,
           'lat' => $this->lat,
           'lon' => $this->lon,
           'dist' => $this->distance,

@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="row mb-3">
+        <div class="col-12 ">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-header">
+                    <h3>Larga</h3>
+                     {% set travesia = tracks|filter(v => v.type == '1') %}
+                    <h5>Actual: {{ (travesia|first).length ?? 'No hay' }} metros ({{ (travesia|first).points ?? 0 }} puntos)</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form.larga) }}
+                    <div class="form-group">
+                        {{ form_label(form.larga.file) }}
+                        {{ form_widget(form.larga.file, {'attr': {'class': 'form-control-file'}}) }}
+                    </div>
+
+                    {{ form_widget(form.larga.save, {'attr': {'class': 'btn btn-primary'}}) }}
+                    {{ form_end(form.larga) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12 ">
+            <div class="card border-left-secondary shadow h-100 py-2">
+                <div class="card-header">
+                    <h3>Corta</h3>
+                    {% set travesia = tracks|filter(v => v.type == '2') %}
+                    <h5>Actual: {{ (travesia|first).length ?? 'No hay' }} metros ({{ (travesia|first).points ?? 0 }} puntos)</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form.corta) }}
+                    <div class="form-group">
+                        {{ form_label(form.corta.file) }}
+                        {{ form_widget(form.corta.file, {'attr': {'class': 'form-control-file'}}) }}
+                    </div>
+
+                    {{ form_widget(form.corta.save, {'attr': {'class': 'btn btn-primary'}}) }}
+                    {{ form_end(form.corta) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12 ">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-header">
+                    <h3>Familiar</h3>
+                    {% set travesia = tracks|filter(v => v.type == '3') %}
+                    <h5>Actual: {{ (travesia|first).length ?? 'No hay' }} metros ({{ (travesia|first).points ?? 0 }} puntos)</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form.familiar) }}
+                    <div class="form-group">
+                        {{ form_label(form.familiar.file) }}
+                        {{ form_widget(form.familiar.file, {'attr': {'class': 'form-control-file'}}) }}
+                    </div>
+
+                    {{ form_widget(form.familiar.save, {'attr': {'class': 'btn btn-primary'}}) }}
+                    {{ form_end(form.familiar) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12 ">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-header">
+                    <h3>Controles</h3>
+                    <h5>Actual: {{ controls|length }} controles</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form.controles) }}
+                    <div class="form-group">
+                        {{ form_label(form.controles.file) }}
+                        {{ form_widget(form.controles.file, {'attr': {'class': 'form-control-file'}}) }}
+                    </div>
+
+                    {{ form_widget(form.controles.save, {'attr': {'class': 'btn btn-primary'}}) }}
+                    {{ form_end(form.controles) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(document).ready(function() {
+            var time = new Date();
+            var hours = time.getHours();
+            var minutes = time.getMinutes();
+            var seconds = time.getSeconds();
+            var ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            seconds = seconds < 10 ? '0'+seconds : seconds;
+            var strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+            $('#time').text(strTime);
+
+            setInterval(function() {
+                var time = new Date();
+                var hours = time.getHours();
+                var minutes = time.getMinutes();
+                var seconds = time.getSeconds();
+                var ampm = hours >= 12 ? 'pm' : 'am';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes < 10 ? '0'+minutes : minutes;
+                seconds = seconds < 10 ? '0'+seconds : seconds;
+                var strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+                $('#time').text(strTime);
+            }, 1000);
+        });
+    </script>
+{% endblock %}
+

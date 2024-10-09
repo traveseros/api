@@ -1,0 +1,198 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" id="counter" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></></div>
+            </div>
+        </div>
+        <div class="col-12">
+            <h3 class="text-center">Travesía Larga</h3>
+            <table class="table table-striped">
+                <thead style="border-top: 1px solid #a2a2a2">
+                <tr>
+                    <th scope="col">Equipo</th>
+                    {% for control in controles %}
+                        {% if control.controlId >=10 and control.controlId < 16 %}
+                            <th scope="col" colspan="2" class="text-center custom-table-head">{{ control.controlId }}-{{ control.controlId + 1 }}</th>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th scope="col"> - </th>
+                    {% for control in controles %}
+                        {% if control.controlId >=10 and control.controlId < 16 %}
+                            <td class="text-center custom-table-subhead">Empieza</td>
+                            <td class="text-center custom-table-subhead">Esperado/<br>Media</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody id="larga-container">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-12">
+            <h3 class="text-center">Travesía Corta</h3>
+            <table class="table table-striped">
+                <thead style="border-top: 1px solid #a2a2a2">
+                <tr>
+                    <th scope="col">Equipo</th>
+                    {% for control in controles %}
+                        {% if control.controlId >=20 and control.controlId < 25 %}
+                            <th scope="col" colspan="2" class="text-center custom-table-head">{{ control.controlId }}-{{ control.controlId + 1 }}</th>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th scope="col"> - </th>
+                    {% for control in controles %}
+                        {% if control.controlId >=20 and control.controlId < 25 %}
+                            <td class="text-center custom-table-subhead">Empieza</td>
+                            <td class="text-center custom-table-subhead">Esperado/<br>Media</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody id="corta-container">
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="col-12">
+            <h3 class="text-center">Travesía Familiar</h3>
+            <table class="table table-striped">
+                <thead style="border-top: 1px solid #a2a2a2">
+                <tr>
+                    <th scope="col">Equipo</th>
+                    {% for control in controles %}
+                        {% if control.controlId >=30 and control.controlId < 35 %}
+                            <th scope="col" colspan="2" class="text-center custom-table-head">{{ control.controlId }}-{{ control.controlId + 1 }}</th>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th scope="col"> - </th>
+                    {% for control in controles %}
+                        {% if control.controlId >=30 and control.controlId < 35 %}
+                            <td class="text-center custom-table-subhead">Empieza</td>
+                            <td class="text-center custom-table-subhead">Esperado/<br>Media</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody id="familiar-container">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/js/moment.min.js"></script>
+    <script>
+        const renderTable = function (data, travesiaId, container) {
+            $(container).html('');
+            const travesia = Object.values(data[travesiaId]);
+            travesia.forEach(function (item) {
+                let tramosTable = '';
+                item.tramos.forEach(function (tramo) {
+                    let esperado = '';
+                    if (null === tramo['llegada-timestamp']) {
+                        esperado = tramo.media + 'km/h'
+                    } else {
+                        if (tramo.status === 'en_transito' || tramo.status === 'con_retraso' || tramo.status === 'perdidos') {
+                            const calculo = moment().diff(moment.unix(tramo['llegada-timestamp']), 'minutes');
+                            const horas = Math.floor(Math.abs(calculo) / 60);
+                            const minutos = Math.abs(calculo) - horas * 60;
+                            const minutos_cool = minutos > 9 ? minutos : '0' + minutos;
+                            const signo = calculo < 0 ? '-' : '+';
+                            esperado = `${signo} ${horas}:${minutos_cool}`;
+                        } else {
+                            esperado = moment.unix(tramo['llegada-timestamp']).format('HH:mm');
+                        }
+                    }
+
+                    let status = moment.unix(tramo['hora-timestamp']).format('HH:mm');
+                    let bg = '';
+                    switch (tramo.status) {
+                        case 'terminado':
+                            status += ` <i class="fa-solid fa-circle-check"></i>`;
+                            bg = 'cbg-success';
+                            break;
+                        case 'en_transito':
+                            status += ` <i class="fa-solid fa-spinner fa-spin"></i>`;
+                            bg = 'cbg-success-animated';
+                            break;
+                        case 'con_retraso':
+                            status += ` <i class="fa-solid fa-spinner fa-spin"></i>`;
+                            bg = 'cbg-warning-animated';
+                            break;
+                        case 'perdidos':
+                            status += ` <i class="fa-solid fa-spinner fa-spin"></i>`;
+                            bg = 'cbg-danger-animated';
+                            break;
+                        case 'no_empezado':
+                            status = `<i class="fa-solid fa-circle-pause"></i>`;
+                            break;
+                        default:
+                            status = tramo.status;
+                    }
+
+                    tramosTable += `
+                        <td class='text-center ${bg}'>${status}</td>
+                        <td class='text-center ${bg}'>${esperado}</td>`;
+                });
+                $(container).append(`
+                    <tr>
+                        <td>${item.dorsal} - ${item.equipo}</td>
+                        ${tramosTable}
+                    </tr>`
+                );
+            });
+        };
+
+
+        const updateTable = function () {
+            $.get('{{ path('current-table') }}', function(data){
+                renderTable(data, 1, '#larga-container');
+                renderTable(data, 2, '#corta-container');
+                renderTable(data, 3, '#familiar-container');
+            });
+        };
+
+        const slider = function(){
+
+        };
+
+        let interval = null;
+
+        const counter = function (){
+            clearInterval(interval);
+            let counter = 60;
+            interval = setInterval(function(){
+                counter--;
+                $('#counter').html(`nuevos datos en ${counter} segundos`);
+                $('#counter').css('width', `${Math.floor(1.667 * counter)}%`);
+                $('#counter').attr('aria-valuenow', `${Math.floor(1.667 * counter)}`);
+            }, 1000);
+        };
+
+        $(document).ready(function(){
+            updateTable();
+            counter();
+        });
+
+        setInterval(function(){
+            updateTable();
+            counter();
+        }, 60000);
+    </script>
+{% endblock %}
