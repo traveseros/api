@@ -3,7 +3,19 @@
 {% block stylesheets %}
 {% endblock %}
 
-{% block body %}
+{% block content %}
+    <div class="row mb-3">
+        <div class="col-12 ">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-header">
+                    <h3>Larga</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Holi</h5>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12">
             <div class="progress">
@@ -99,6 +111,9 @@
     <script src="/js/moment.min.js"></script>
     <script>
         const renderTable = function (data, travesiaId, container) {
+            console.log(container);
+            $('#larga-container').html('<h1>hola</h1>');
+            console.log($(container).html());
             $(container).html('');
             const travesia = Object.values(data[travesiaId]);
             travesia.forEach(function (item) {

@@ -131,12 +131,14 @@ class CalculationController extends AbstractController
 
                 if($tramo->status() === TramoStatus::NOT_STARTED && $tramo->controlInicio()->controlId() !== 10 && $tramo->controlInicio()->controlId() !== 20 && $tramo->controlInicio()->controlId() !== 30 ) {
                     $validKey = \count($salida[$equipo->travesiaId()][$equipo->equipoId()]['tramos']) - 1;
-                    $entrada = $salida[$equipo->travesiaId()][$equipo->equipoId()]['tramos'][$validKey]['lastValidTime'];
+                    if ($validKey >= 0){
+                        $entrada = $salida[$equipo->travesiaId()][$equipo->equipoId()]['tramos'][$validKey]['lastValidTime'];
 
-                    if ($entrada !== null){
-                        $calculo = $entrada->getTimestamp() + ((1000 / 3600) * $tramo->media() * $tramo->controlInicio()->distance());
-                        $previsto = ((new \DateTimeImmutable())->setTimestamp($calculo));
-                        $lastValidTime = $previsto;
+                        if ($entrada !== null) {
+                            $calculo = $entrada->getTimestamp() + ((1000 / 3600) * $tramo->media() * $tramo->controlInicio()->distance());
+                            $previsto = ((new \DateTimeImmutable())->setTimestamp($calculo));
+                            $lastValidTime = $previsto;
+                        }
                     }
                 }
 
